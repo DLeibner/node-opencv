@@ -1,7 +1,3 @@
-/**
- * @file main.cpp
- * @author William Chan <root@williamchan.me>
- */
 #include <napi.h>
 #include "matrix.h"
 

@@ -1,7 +1,3 @@
-/**
- * @file async.h
- * @author William Chan <root@williamchan.me>
- */
 #pragma once
 #include <napi.h>
 #include <thread>

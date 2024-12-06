@@ -1,8 +1,3 @@
-/**
- * This file is part of the William Chan.
- * @author William Chan <root@williamchan.me>
- */
-
 /// <reference types="node" />
 
 declare namespace cv {

@@ -1,8 +1,3 @@
-/**
- * @file matrix.cpp
- * @author William Chan <root@williamchan.me>
- */
-
 #include "matrix.h"
 #include "async.h"
 
@@ -339,4 +334,3 @@ Napi::Value Matrix::GetData(const Napi::CallbackInfo& info) {
         dataSize
     );
 }
-

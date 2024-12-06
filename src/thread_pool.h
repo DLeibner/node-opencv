@@ -1,8 +1,3 @@
-/**
- * @file thread_pool.h
- * @author William Chan <root@williamchan.me>
- */
-
 #pragma once
 #include <vector>
 #include <queue>
