@@ -41,6 +41,17 @@ declare namespace cv {
     const IMREAD_ANYDEPTH: number;
     const IMREAD_ANYCOLOR: number;
 
+    const CV_8S: number;
+    const CV_8U: number;
+    const CV_8UC1: number;
+    const CV_8UC3: number;
+    const CV_8UC4: number;
+    const CV_16S: number;
+    const CV_32S: number;
+
+    const COLOR_GRAY2RGBA: number;
+    const COLOR_RGB2RGBA: number;
+
     // static methods
     function imdecodeAsync(buffer: Buffer, flag?: number): Promise<Mat>;
     function imreadAsync(filename: string, flag?: number): Promise<Mat>;

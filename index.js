@@ -16,5 +16,13 @@ module.exports = {
     IMREAD_UNCHANGED: addon.IMREAD_UNCHANGED,
     IMREAD_ANYDEPTH: addon.IMREAD_ANYDEPTH,
     IMREAD_ANYCOLOR: addon.IMREAD_ANYCOLOR,
-
+    CV_8S: addon.CV_8S,
+    CV_8U: addon.CV_8U,
+    CV_8UC1: addon.CV_8UC1,
+    CV_8UC3: addon.CV_8UC3,
+    CV_8UC4: addon.CV_8UC4,
+    CV_16S: addon.CV_16S,
+    CV_32S: addon.CV_32S,
+    COLOR_GRAY2RGBA: addon.COLOR_GRAY2RGBA,
+    COLOR_RGB2RGBA: addon.COLOR_RGB2RGBA,
 };
