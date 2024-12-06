@@ -2,11 +2,11 @@
 #include <napi.h>
 #include <opencv2/opencv.hpp>
 
-class Matrix : public Napi::ObjectWrap<Matrix> {
+class Mat : public Napi::ObjectWrap<Mat> {
 public:
     static Napi::Object Init(Napi::Env env, Napi::Object exports);
-    Matrix(const Napi::CallbackInfo& info);
-    ~Matrix();
+    Mat(const Napi::CallbackInfo& info);
+    ~Mat();
 
     cv::Mat mat;
     static Napi::Value Imread(const Napi::CallbackInfo& info);
