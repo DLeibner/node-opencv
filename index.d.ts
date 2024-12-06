@@ -21,11 +21,17 @@ declare namespace cv {
             width: number;
             height: number;
         }
+        type(): number;
         matchTemplate(template: Mat, method: number): Mat;
         matchTemplateAsync(template: Mat, method: number): Promise<Mat>;
         minMaxLocAsync(): Promise<MinMaxLocResult>;
         release(): void;
+        convertTo(outputMat: Mat, rtype: number, alpha: number, beta: number): void;
     }
+
+    const Mat: {
+        new (): Mat;
+    };
 
     // constants
     const TM_CCOEFF_NORMED: number;

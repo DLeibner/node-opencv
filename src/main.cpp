@@ -1,5 +1,5 @@
 #include <napi.h>
-#include "matrix.h"
+#include "mat.h"
 
 Napi::Object Init(Napi::Env env, Napi::Object exports) {
     exports.Set(Napi::String::New(env, "TM_SQDIFF"), Napi::Number::New(env, cv::TM_SQDIFF));
@@ -26,7 +26,7 @@ Napi::Object Init(Napi::Env env, Napi::Object exports) {
     exports.Set(Napi::String::New(env, "COLOR_GRAY2RGBA"), Napi::Number::New(env, cv::COLOR_GRAY2RGBA));
     exports.Set(Napi::String::New(env, "COLOR_RGB2RGBA"), Napi::Number::New(env, cv::COLOR_RGB2RGBA));
 
-    return Matrix::Init(env, exports);
+    return Mat::init(env, exports);
 }
 
 NODE_API_MODULE(opencv_addon, Init)

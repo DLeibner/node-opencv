@@ -5,23 +5,26 @@ class
 
 Napi::FunctionReference Mat::constructor;
 
-Napi::Object Mat::Init(Napi::Env env, Napi::Object exports) {
+Napi::Object Mat::init(Napi::Env env, Napi::Object exports) {
     Napi::HandleScope scope(env);
 
     Napi::Function func = DefineClass(env, "Mat", {
-        InstanceMethod("matchTemplateAsync", &Mat::MatchTemplateAsync),
-        InstanceMethod("matchTemplate", &Mat::MatchTemplate),
-        InstanceMethod("minMaxLocAsync", &Mat::MinMaxLocAsync),
-        InstanceMethod("release", &Mat::Release),
-        StaticMethod("imdecodeAsync", &Mat::ImdecodeAsync),
-        StaticMethod("imdecode", &Mat::Imdecode),
-        StaticMethod("imread", &Mat::Imread),
-        StaticMethod("imreadAsync", &Mat::ImreadAsync),
+        InstanceMethod("matchTemplateAsync", &Mat::matchTemplateAsync),
+        InstanceMethod("matchTemplate", &Mat::matchTemplate),
+        InstanceMethod("minMaxLocAsync", &Mat::minMaxLocAsync),
+        InstanceMethod("release", &Mat::release),
+        InstanceMethod("convertTo", &Mat::convertTo),
+        InstanceMethod("type", &Mat::getType),
 
-        InstanceAccessor<&Mat::GetCols>("cols"),
-        InstanceAccessor<&Mat::GetRows>("rows"),
-        InstanceAccessor<&Mat::GetData>("data"),
-        InstanceAccessor<&Mat::GetSize>("size")
+        StaticMethod("imdecodeAsync", &Mat::imdecodeAsync),
+        StaticMethod("imdecode", &Mat::imdecode),
+        StaticMethod("imread", &Mat::imread),
+        StaticMethod("imreadAsync", &Mat::imreadAsync),
+
+        InstanceAccessor<&Mat::getCols>("cols"),
+        InstanceAccessor<&Mat::getRows>("rows"),
+        InstanceAccessor<&Mat::getData>("data"),
+        InstanceAccessor<&Mat::getSize>("size"),
     });
 
     constructor = Napi::Persistent(func);
@@ -41,7 +44,7 @@ Mat::~Mat() {
     }
 }
 
-Napi::Value Mat::Imdecode(const Napi::CallbackInfo& info) {
+Napi::Value Mat::imdecode(const Napi::CallbackInfo& info) {
     Napi::Env env = info.Env();
 
     try {
@@ -71,7 +74,7 @@ Napi::Value Mat::Imdecode(const Napi::CallbackInfo& info) {
 
 
 
-Napi::Value Mat::ImdecodeAsync(const Napi::CallbackInfo& info) {
+Napi::Value Mat::imdecodeAsync(const Napi::CallbackInfo& info) {
     Napi::Env env = info.Env();
 
     try {
@@ -115,7 +118,7 @@ Napi::Value Mat::ImdecodeAsync(const Napi::CallbackInfo& info) {
     }
 }
 
-Napi::Value Mat::Imread(const Napi::CallbackInfo& info) {
+Napi::Value Mat::imread(const Napi::CallbackInfo& info) {
     Napi::Env env = info.Env();
     try {
         if (info.Length() < 1) {
@@ -139,14 +142,13 @@ Napi::Value Mat::Imread(const Napi::CallbackInfo& info) {
         Mat* unwrapped = Mat::Unwrap(mat);
         unwrapped->mat = std::move(result);
         return mat;
-        return env.Null();
     } catch (const std::exception& e) {
         Napi::Error::New(env, e.what()).ThrowAsJavaScriptException();
         return env.Undefined();
     }
 }
 
-Napi::Value Mat::ImreadAsync(const Napi::CallbackInfo& info) {
+Napi::Value Mat::imreadAsync(const Napi::CallbackInfo& info) {
     Napi::Env env = info.Env();
     try {
 
@@ -189,7 +191,7 @@ Napi::Value Mat::ImreadAsync(const Napi::CallbackInfo& info) {
     }
 }
 
-Napi::Value Mat::MatchTemplateAsync(const Napi::CallbackInfo& info) {
+Napi::Value Mat::matchTemplateAsync(const Napi::CallbackInfo& info) {
     Napi::Env env = info.Env();
     Napi::Promise::Deferred deferred = Napi::Promise::Deferred::New(env);
 
@@ -230,7 +232,7 @@ Napi::Value Mat::MatchTemplateAsync(const Napi::CallbackInfo& info) {
     );
 }
 
-Napi::Value Mat::MatchTemplate(const Napi::CallbackInfo& info) {
+Napi::Value Mat::matchTemplate(const Napi::CallbackInfo& info) {
     Napi::Env env = info.Env();
 
     if (info.Length() < 2) {
@@ -260,9 +262,51 @@ Napi::Value Mat::MatchTemplate(const Napi::CallbackInfo& info) {
     return mat;
 }
 
-Napi::Value Mat::Release(const Napi::CallbackInfo& info) {
+Napi::Value Mat::release(const Napi::CallbackInfo& info) {
     mat.release();
     return info.This();
+}
+
+Napi::Value Mat::convertTo(const Napi::CallbackInfo& info) {
+    Napi::Env env = info.Env();
+
+    if (info.Length() < 2) {
+        Napi::TypeError::New(env, "Expected at least 2 arguments").ThrowAsJavaScriptException();
+        return env.Undefined();
+    }
+
+    if (!info[0].As<Napi::Object>().InstanceOf(Mat::constructor.Value())) {
+        Napi::TypeError::New(env, "First argument must be a Mat instance").ThrowAsJavaScriptException();
+        return env.Undefined();
+    }
+
+    if (!info[1].IsNumber()) {
+        Napi::TypeError::New(env, "Second argument must be a number").ThrowAsJavaScriptException();
+        return env.Undefined();
+    }
+
+    Mat* outputMat = Napi::ObjectWrap<Mat>::Unwrap(info[0].As<Napi::Object>());
+    int rtype = info[1].As<Napi::Number>().Int32Value();
+
+    double alpha = 1.0;
+    double beta = 0.0;
+
+    if (info.Length() > 2 && info[2].IsNumber()) {
+        alpha = info[2].As<Napi::Number>().DoubleValue();
+    }
+
+        if (info.Length() > 3 && info[3].IsNumber()) {
+        beta = info[3].As<Napi::Number>().DoubleValue();
+    }
+
+    try {
+            mat.convertTo(outputMat->mat, rtype, alpha, beta);
+        } catch (const std::exception& e) {
+            Napi::Error::New(env, e.what()).ThrowAsJavaScriptException();
+            return env.Null();
+        }
+
+    return env.Null();
 }
 
 struct MinMaxResult {
@@ -270,7 +314,7 @@ struct MinMaxResult {
     cv::Point minLoc, maxLoc;
 };
 
-Napi::Value Mat::MinMaxLocAsync(const Napi::CallbackInfo& info) {
+Napi::Value Mat::minMaxLocAsync(const Napi::CallbackInfo& info) {
     Napi::Env env = info.Env();
     auto self = this;
 
@@ -300,15 +344,15 @@ Napi::Value Mat::MinMaxLocAsync(const Napi::CallbackInfo& info) {
     );
 }
 
-Napi::Value Mat::GetCols(const Napi::CallbackInfo& info) {
+Napi::Value Mat::getCols(const Napi::CallbackInfo& info) {
     return Napi::Number::New(info.Env(), mat.cols);
 }
 
-Napi::Value Mat::GetRows(const Napi::CallbackInfo& info) {
+Napi::Value Mat::getRows(const Napi::CallbackInfo& info) {
     return Napi::Number::New(info.Env(), mat.rows);
 }
 
-Napi::Value Mat::GetSize(const Napi::CallbackInfo& info) {
+Napi::Value Mat::getSize(const Napi::CallbackInfo& info) {
     Napi::Env env = info.Env();
     auto size = mat.size();
     auto obj = Napi::Object::New(env);
@@ -318,7 +362,7 @@ Napi::Value Mat::GetSize(const Napi::CallbackInfo& info) {
 }
 
 
-Napi::Value Mat::GetData(const Napi::CallbackInfo& info) {
+Napi::Value Mat::getData(const Napi::CallbackInfo& info) {
     Napi::Env env = info.Env();
 
     if (mat.empty()) {
@@ -335,4 +379,8 @@ Napi::Value Mat::GetData(const Napi::CallbackInfo& info) {
         mat.data,
         dataSize
     );
+}
+
+Napi::Value Mat::getType(const Napi::CallbackInfo& info) {
+    return Napi::Number::New(info.Env(), mat.type());
 }
