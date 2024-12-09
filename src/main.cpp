@@ -1,5 +1,5 @@
 #include <napi.h>
-#include "mat.h"
+#include "Core/Mat.h"
 
 Napi::Object Init(Napi::Env env, Napi::Object exports) {
     exports.Set(Napi::String::New(env, "TM_SQDIFF"), Napi::Number::New(env, cv::TM_SQDIFF));

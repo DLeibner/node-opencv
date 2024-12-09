@@ -15,7 +15,7 @@ set(NODE_ADDON_API_DIR ${CMAKE_SOURCE_DIR}/node_modules/node-addon-api)
 
 set(SOURCE_FILES
     src/main.cpp
-    src/mat.cpp
+    src/Core/Mat.cpp
 )
 
 add_library(${PROJECT_NAME} SHARED ${SOURCE_FILES})

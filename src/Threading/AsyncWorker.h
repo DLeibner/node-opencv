@@ -3,7 +3,7 @@
 #include <thread>
 #include <functional>
 #include <future>
-#include "thread_pool.h"
+#include "ThreadPool.h"
 
 template<typename Result>
 class AsyncWorker {
