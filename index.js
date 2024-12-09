@@ -3,6 +3,7 @@ const addon = require('./build/Release/node-opencv.node');
 module.exports = {
     Mat: addon.Mat,
     Rect: addon.Rect,
+    Point: addon.Point,
     imread: addon.imread,
     imdecode: addon.imdecode,
     imdecodeAsync: addon.imdecodeAsync,

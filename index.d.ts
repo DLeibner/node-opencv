@@ -40,6 +40,12 @@ declare namespace cv {
         height: number;
     }
 
+    class Point {
+        constructor(x: number, y: number);
+        x: number;
+        y: number;
+    }
+
     // constants
     const TM_CCOEFF_NORMED: number;
     const TM_CCORR_NORMED: number;
