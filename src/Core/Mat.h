@@ -9,10 +9,6 @@ public:
     ~Mat();
 
     cv::Mat mat;
-    static Napi::Value imread(const Napi::CallbackInfo& info);
-    static Napi::Value imdecode(const Napi::CallbackInfo& info);
-    static Napi::Value imdecodeAsync(const Napi::CallbackInfo& info);
-    static Napi::Value imreadAsync(const Napi::CallbackInfo& info);
 
     Napi::Value getCols(const Napi::CallbackInfo& info);
     Napi::Value getRows(const Napi::CallbackInfo& info);
@@ -26,6 +22,5 @@ public:
     Napi::Value getType(const Napi::CallbackInfo& info);
     Napi::Value convertTo(const Napi::CallbackInfo& info);
 
-protected:
     static Napi::FunctionReference constructor;
 };

@@ -2,10 +2,10 @@ const addon = require('./build/Release/node-opencv.node');
 
 module.exports = {
     Mat: addon.Mat,
-    imread: addon.Mat.imread,
-    imdecode: addon.Mat.imdecode,
-    imdecodeAsync: addon.Mat.imdecodeAsync,
-    imreadAsync: addon.Mat.imreadAsync,
+    imread: addon.imread,
+    imdecode: addon.imdecode,
+    imdecodeAsync: addon.imdecodeAsync,
+    imreadAsync: addon.imreadAsync,
     TM_CCOEFF_NORMED: addon.TM_CCOEFF_NORMED,
     TM_CCORR_NORMED: addon.TM_CCORR_NORMED,
     TM_SQDIFF_NORMED: addon.TM_SQDIFF_NORMED,

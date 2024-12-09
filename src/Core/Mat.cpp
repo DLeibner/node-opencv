@@ -1,8 +1,6 @@
 #include "Mat.h"
 #include "../Threading/AsyncWorker.h"
 
-class
-
 Napi::FunctionReference Mat::constructor;
 
 Napi::Object Mat::init(Napi::Env env, Napi::Object exports) {
@@ -15,11 +13,6 @@ Napi::Object Mat::init(Napi::Env env, Napi::Object exports) {
         InstanceMethod("release", &Mat::release),
         InstanceMethod("convertTo", &Mat::convertTo),
         InstanceMethod("type", &Mat::getType),
-
-        StaticMethod("imdecodeAsync", &Mat::imdecodeAsync),
-        StaticMethod("imdecode", &Mat::imdecode),
-        StaticMethod("imread", &Mat::imread),
-        StaticMethod("imreadAsync", &Mat::imreadAsync),
 
         InstanceAccessor<&Mat::getCols>("cols"),
         InstanceAccessor<&Mat::getRows>("rows"),
@@ -41,153 +34,6 @@ Mat::Mat(const Napi::CallbackInfo& info)
 Mat::~Mat() {
     if (!mat.empty()) {
         mat.release();
-    }
-}
-
-Napi::Value Mat::imdecode(const Napi::CallbackInfo& info) {
-    Napi::Env env = info.Env();
-
-    try {
-        if (info.Length() < 1) {
-            throw std::runtime_error("Buffer argument required");
-        }
-        if (!info[0].IsBuffer()) {
-            throw std::runtime_error("Buffer argument must be a Buffer");
-        }
-        Napi::Buffer<uchar> buffer = info[0].As<Napi::Buffer<uchar>>();
-        std::vector<uchar> buffer_data(buffer.Data(), buffer.Data() + buffer.Length());
-
-        cv::Mat result = cv::imdecode(buffer_data, cv::IMREAD_COLOR);
-
-        if (result.empty()) {
-            throw std::runtime_error("Failed to decode image");
-        }
-        auto mat = Mat::constructor.New({});
-        Mat* unwrapped = Mat::Unwrap(mat);
-        unwrapped->mat = std::move(result);
-        return mat;
-    } catch (const std::exception& e) {
-        Napi::Error::New(env, e.what()).ThrowAsJavaScriptException();
-        return env.Undefined();
-    }
-}
-
-
-
-Napi::Value Mat::imdecodeAsync(const Napi::CallbackInfo& info) {
-    Napi::Env env = info.Env();
-
-    try {
-        if (info.Length() < 1) {
-            throw std::runtime_error("Buffer argument required");
-        }
-        if (!info[0].IsBuffer()) {
-            throw std::runtime_error("Buffer argument must be a Buffer");
-        }
-        if (info.Length() > 1 && !info[1].IsNumber()) {
-            throw std::runtime_error("Flags argument must be a number");
-        }
-
-        Napi::Buffer<uchar> buffer = info[0].As<Napi::Buffer<uchar>>();
-        std::vector<uchar> buffer_data(buffer.Data(), buffer.Data() + buffer.Length());
-
-        int flags = cv::IMREAD_COLOR;
-        if (info.Length() > 1 && info[1].IsNumber()) {
-            flags = info[1].As<Napi::Number>().Int32Value();
-        }
-
-        return AsyncWorker<cv::Mat>::Execute(
-            env,
-            [buffer_data = std::move(buffer_data), flags]() {
-                cv::Mat result = cv::imdecode(buffer_data, flags);
-                if (result.empty()) {
-                    throw std::runtime_error("Failed to decode image");
-                }
-                return result;
-            },
-            [](Napi::Env env, const cv::Mat& result) {
-                auto mat = Mat::constructor.New({});
-                Mat* unwrapped = Mat::Unwrap(mat);
-                unwrapped->mat = std::move(result);
-                return mat;
-            }
-        );
-    } catch (const std::exception& e) {
-        Napi::Error::New(env, e.what()).ThrowAsJavaScriptException();
-        return env.Undefined();
-    }
-}
-
-Napi::Value Mat::imread(const Napi::CallbackInfo& info) {
-    Napi::Env env = info.Env();
-    try {
-        if (info.Length() < 1) {
-            throw std::runtime_error("Filename argument required");
-        }
-        if (!info[0].IsString()) {
-            throw std::runtime_error("Filename argument must be a string");
-        }
-        std::string filename = info[0].As<Napi::String>().Utf8Value();
-        int flags = cv::IMREAD_COLOR;
-
-        if (info.Length() > 1 && info[1].IsNumber()) {
-            flags = info[1].As<Napi::Number>().Int32Value();
-        }
-
-        cv::Mat result = cv::imread(filename, flags);
-        if (result.empty()) {
-            throw std::runtime_error("Failed to load image Path: " + filename);
-        }
-        auto mat = Mat::constructor.New({});
-        Mat* unwrapped = Mat::Unwrap(mat);
-        unwrapped->mat = std::move(result);
-        return mat;
-    } catch (const std::exception& e) {
-        Napi::Error::New(env, e.what()).ThrowAsJavaScriptException();
-        return env.Undefined();
-    }
-}
-
-Napi::Value Mat::imreadAsync(const Napi::CallbackInfo& info) {
-    Napi::Env env = info.Env();
-    try {
-
-        if (info.Length() < 1) {
-            throw std::runtime_error("Filename argument required");
-        }
-        if (!info[0].IsString()) {
-            throw std::runtime_error("Filename argument must be a string");
-        }
-        if (info.Length() > 1 && !info[1].IsNumber()) {
-            throw std::runtime_error("Flags argument must be a number");
-        }
-
-        std::string filename = info[0].As<Napi::String>().Utf8Value();
-        int flags = cv::IMREAD_COLOR;
-
-        if (info.Length() > 1 && info[1].IsNumber()) {
-            flags = info[1].As<Napi::Number>().Int32Value();
-        }
-
-        return AsyncWorker<cv::Mat>::Execute(
-            env,
-            [filename, flags]() {
-                cv::Mat result = cv::imread(filename, flags);
-                if (result.empty()) {
-                    throw std::runtime_error("Failed to load image: " + filename);
-                }
-                return result;
-            },
-            [](Napi::Env env, const cv::Mat& result) {
-                auto mat = Mat::constructor.New({});
-                Mat* unwrapped = Mat::Unwrap(mat);
-                unwrapped->mat = result.clone();
-                return mat;
-            }
-        );
-    } catch (const std::exception& e) {
-        Napi::Error::New(env, e.what()).ThrowAsJavaScriptException();
-        return env.Undefined();
     }
 }
 
@@ -360,7 +206,6 @@ Napi::Value Mat::getSize(const Napi::CallbackInfo& info) {
     obj.Set("height", Napi::Number::New(env, size.height));
     return obj;
 }
-
 
 Napi::Value Mat::getData(const Napi::CallbackInfo& info) {
     Napi::Env env = info.Env();
