@@ -13,6 +13,7 @@ Napi::Object Mat::init(Napi::Env env, Napi::Object exports) {
         InstanceMethod("release", &Mat::release),
         InstanceMethod("convertTo", &Mat::convertTo),
         InstanceMethod("type", &Mat::getType),
+        InstanceMethod("cvtColor", &Mat::cvtColor),
 
         InstanceAccessor<&Mat::getCols>("cols"),
         InstanceAccessor<&Mat::getRows>("rows"),
@@ -228,4 +229,30 @@ Napi::Value Mat::getData(const Napi::CallbackInfo& info) {
 
 Napi::Value Mat::getType(const Napi::CallbackInfo& info) {
     return Napi::Number::New(info.Env(), mat.type());
+}
+
+Napi::Value Mat::cvtColor(const Napi::CallbackInfo& info) {
+    Napi::Env env = info.Env();
+
+    if (info.Length() < 2) {
+        Napi::TypeError::New(env, "Expected 2 arguments").ThrowAsJavaScriptException();
+        return env.Undefined();
+    }
+
+    if (!info[0].As<Napi::Object>().InstanceOf(Mat::constructor.Value())) {
+        Napi::TypeError::New(env, "First argument must be a Mat instance").ThrowAsJavaScriptException();
+        return env.Undefined();
+    }
+
+    if (!info[1].IsNumber()) {
+        Napi::TypeError::New(env, "Second argument must be a number").ThrowAsJavaScriptException();
+        return env.Undefined();
+    }
+
+    Mat* dest = Napi::ObjectWrap<Mat>::Unwrap(info[0].As<Napi::Object>());
+    int code = info[1].As<Napi::Number>().Int32Value();
+
+    cv::cvtColor(mat, dest->mat, code);
+
+    return env.Undefined();
 }

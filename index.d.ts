@@ -30,6 +30,7 @@ declare namespace cv {
         minMaxLocAsync(): Promise<MinMaxLocResult>;
         release(): void;
         convertTo(outputMat: Mat, rtype: number, alpha: number, beta: number): void;
+        cvtColor(destMat: Mat, code: number): void;
     };
 
     class Rect {
