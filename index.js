@@ -4,6 +4,7 @@ module.exports = {
     Mat: addon.Mat,
     Rect: addon.Rect,
     Point: addon.Point,
+    Scalar: addon.Scalar,
     imread: addon.imread,
     imdecode: addon.imdecode,
     imdecodeAsync: addon.imdecodeAsync,

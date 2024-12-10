@@ -47,6 +47,10 @@ declare namespace cv {
         y: number;
     }
 
+    class Scalar {
+        constructor(v0: number, v1: number, v2: number, v3: number);
+    }
+
     // constants
     const TM_CCOEFF_NORMED: number;
     const TM_CCORR_NORMED: number;

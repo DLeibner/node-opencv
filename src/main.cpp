@@ -3,6 +3,7 @@
 #include "Core/Mat.h"
 #include "Core/Rect.h"
 #include "Core/Point.h"
+#include "Core/Scalar.h"
 
 Napi::Object Init(Napi::Env env, Napi::Object exports) {
     exports.Set(Napi::String::New(env, "TM_SQDIFF"), Napi::Number::New(env, cv::TM_SQDIFF));
@@ -33,6 +34,7 @@ Napi::Object Init(Napi::Env env, Napi::Object exports) {
     exports = ImageUtils::init(env, exports);
     exports = Rect::init(env, exports);
     exports = Point::init(env, exports);
+    exports = Scalar::init(env, exports);
 
     return exports;
 }
