@@ -1,6 +1,8 @@
 #include "Mat.h"
 #include "../Threading/AsyncWorker.h"
 #include "Rect.h"
+#include "Point.h"
+#include "Scalar.h"
 
 Napi::FunctionReference Mat::constructor;
 
@@ -16,6 +18,7 @@ Napi::Object Mat::init(Napi::Env env, Napi::Object exports) {
         InstanceMethod("type", &Mat::getType),
         InstanceMethod("cvtColor", &Mat::cvtColor),
         InstanceMethod("roi", &Mat::roi),
+        InstanceMethod("drawRectangle", &Mat::drawRectangle),
 
         InstanceAccessor<&Mat::getCols>("cols"),
         InstanceAccessor<&Mat::getRows>("rows"),
@@ -280,4 +283,42 @@ Napi::Value Mat::roi(const Napi::CallbackInfo& info) {
     Mat* unwrapped = Mat::Unwrap(mat);
     unwrapped->mat = std::move(result);
     return mat;
+}
+
+Napi::Value Mat::drawRectangle(const Napi::CallbackInfo& info) {
+    Napi::Env env = info.Env();
+
+    if (info.Length() < 4) {
+        Napi::TypeError::New(env, "Expected 4 arguments").ThrowAsJavaScriptException();
+        return env.Undefined();
+    }
+
+    if (!info[0].As<Napi::Object>().InstanceOf(Point::constructor.Value())) {
+        Napi::TypeError::New(env, "First argument must be a Point instance").ThrowAsJavaScriptException();
+        return env.Undefined();
+    }
+
+    if (!info[1].As<Napi::Object>().InstanceOf(Point::constructor.Value())) {
+        Napi::TypeError::New(env, "Second argument must be a Point instance").ThrowAsJavaScriptException();
+        return env.Undefined();
+    }
+
+    if (!info[2].As<Napi::Object>().InstanceOf(Scalar::constructor.Value())) {
+        Napi::TypeError::New(env, "Third argument must be a Scalar instance").ThrowAsJavaScriptException();
+        return env.Undefined();
+    }
+
+    if (!info[3].As<Napi::Object>().IsNumber()) {
+        Napi::TypeError::New(env, "Fourth argument must be a number").ThrowAsJavaScriptException();
+        return env.Undefined();
+    }
+
+    Point* point1 = Napi::ObjectWrap<Point>::Unwrap(info[0].As<Napi::Object>());
+    Point* point2 = Napi::ObjectWrap<Point>::Unwrap(info[1].As<Napi::Object>());
+    Scalar* color = Napi::ObjectWrap<Scalar>::Unwrap(info[2].As<Napi::Object>());
+    int thickness = info[3].As<Napi::Number>().Int32Value();
+
+    cv::rectangle(mat, point1->point, point2->point, color->scalar, thickness);
+
+    return env.Undefined();
 }

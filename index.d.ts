@@ -32,6 +32,7 @@ declare namespace cv {
         convertTo(outputMat: Mat, rtype: number, alpha: number, beta: number): void;
         cvtColor(destMat: Mat, code: number): void;
         roi(rect: Rect): Mat;
+        drawRectangle(point1: Point, point2: Point, color: Scalar, thickness: number): void;
     };
 
     class Rect {
