@@ -31,6 +31,7 @@ declare namespace cv {
         release(): void;
         convertTo(outputMat: Mat, rtype: number, alpha: number, beta: number): void;
         cvtColor(destMat: Mat, code: number): void;
+        roi(rect: Rect): Mat;
     };
 
     class Rect {

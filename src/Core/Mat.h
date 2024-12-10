@@ -22,6 +22,7 @@ public:
     Napi::Value getType(const Napi::CallbackInfo& info);
     Napi::Value convertTo(const Napi::CallbackInfo& info);
     Napi::Value cvtColor(const Napi::CallbackInfo& info);
+    Napi::Value roi(const Napi::CallbackInfo& info);
 
     static Napi::FunctionReference constructor;
 };

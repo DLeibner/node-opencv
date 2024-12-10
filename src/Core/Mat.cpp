@@ -1,5 +1,6 @@
 #include "Mat.h"
 #include "../Threading/AsyncWorker.h"
+#include "Rect.h"
 
 Napi::FunctionReference Mat::constructor;
 
@@ -14,6 +15,7 @@ Napi::Object Mat::init(Napi::Env env, Napi::Object exports) {
         InstanceMethod("convertTo", &Mat::convertTo),
         InstanceMethod("type", &Mat::getType),
         InstanceMethod("cvtColor", &Mat::cvtColor),
+        InstanceMethod("roi", &Mat::roi),
 
         InstanceAccessor<&Mat::getCols>("cols"),
         InstanceAccessor<&Mat::getRows>("rows"),
@@ -255,4 +257,27 @@ Napi::Value Mat::cvtColor(const Napi::CallbackInfo& info) {
     cv::cvtColor(mat, dest->mat, code);
 
     return env.Undefined();
+}
+
+Napi::Value Mat::roi(const Napi::CallbackInfo& info) {
+    Napi::Env env = info.Env();
+
+    if (info.Length() < 1) {
+        Napi::TypeError::New(env, "Expected 1 argument").ThrowAsJavaScriptException();
+        return env.Undefined();
+    }
+
+    if (!info[0].As<Napi::Object>().InstanceOf(Rect::constructor.Value())) {
+        Napi::TypeError::New(env, "First argument must be a Rect instance").ThrowAsJavaScriptException();
+        return env.Undefined();
+    }
+
+    Rect* rect = Napi::ObjectWrap<Rect>::Unwrap(info[0].As<Napi::Object>());
+
+    auto result = mat(rect->rect);
+
+    auto mat = Mat::constructor.New({});
+    Mat* unwrapped = Mat::Unwrap(mat);
+    unwrapped->mat = std::move(result);
+    return mat;
 }
