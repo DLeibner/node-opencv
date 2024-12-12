@@ -13,6 +13,7 @@
     "build": "cmake-js rebuild --clean -d",
     "test": "node test.js"
   },
+  "homepage": "https://github.com/DLeibner/node-opencv#readme",
   "dependencies": {
     "node-addon-api": "^8.2.2"
   },
