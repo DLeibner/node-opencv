@@ -13,9 +13,10 @@ set(OPENCV_INCLUDE_DIR $ENV{OPENCV_INCLUDE_DIR})
 set(OPENCV_LIB_DIR $ENV{OPENCV_LIB_DIR})
 set(NODE_ADDON_API_DIR ${CMAKE_SOURCE_DIR}/node_modules/node-addon-api)
 
-set(SOURCE_FILES
-    src/main.cpp
-    src/Core/Mat.cpp
+file(GLOB SOURCE_FILES
+    src/*.cpp
+    src/Core/*.cpp
+    src/Threading/*.cpp
 )
 
 add_library(${PROJECT_NAME} SHARED ${SOURCE_FILES})
@@ -24,6 +25,9 @@ target_include_directories(${PROJECT_NAME} PRIVATE
     ${CMAKE_JS_INC}
     ${NODE_ADDON_API_DIR}
     ${OPENCV_INCLUDE_DIR}
+    src
+    src/Core
+    src/Threading
 )
 
 target_compile_definitions(${PROJECT_NAME} PRIVATE
