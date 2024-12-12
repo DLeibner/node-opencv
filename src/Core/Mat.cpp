@@ -162,8 +162,10 @@ Napi::Value Mat::convertTo(const Napi::CallbackInfo& info) {
 }
 
 struct MinMaxResult {
-    double minVal, maxVal;
-    cv::Point minLoc, maxLoc;
+    double minVal;
+    double maxVal;
+    cv::Point minLoc;
+    cv::Point maxLoc;
 };
 
 Napi::Value Mat::minMaxLocAsync(const Napi::CallbackInfo& info) {
