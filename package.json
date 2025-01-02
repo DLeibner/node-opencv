@@ -6,7 +6,8 @@
   "types": "index.d.ts",
   "files": [
     "build/Release/node-opencv.node",
-    "index.d.ts"
+    "index.d.ts",
+    "src/"
   ],
   "scripts": {
     "prepare": "npm run build",
