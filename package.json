@@ -12,7 +12,9 @@
   "scripts": {
     "prepare": "npm run build",
     "build": "cmake-js rebuild --clean -d",
-    "test": "node test.js"
+    "test": "node test.js",
+    "preversion": "npm run build",
+    "postversion": "npm publish --access public && git push origin main --tags"
   },
   "homepage": "https://github.com/DLeibner/node-opencv#readme",
   "dependencies": {
