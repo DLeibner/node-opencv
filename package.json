@@ -1,6 +1,6 @@
 {
   "name": "@dleibner/node-opencv",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "description": "OpenCV bindings for Node.js",
   "main": "index.js",
   "types": "index.d.ts",
