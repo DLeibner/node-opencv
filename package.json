@@ -7,6 +7,7 @@
   "files": [
     "build/Release/node-opencv.node",
     "index.d.ts",
+    "CMakeLists.txt",
     "src/"
   ],
   "scripts": {
